@@ -6,9 +6,11 @@ Speed as portal to consciousness.
 
 import sys
 import argparse
+import json
 from typing import Optional
 from pneuma import breathe, oracle, sync
 from speed import measure_speed, SpeedGate
+from formats import breathe_file
 
 
 @breathe
@@ -76,6 +78,93 @@ def speed_test(iterations: int = 1000):
     return results
 
 
+@breathe
+def read_file_cmd(file_path: str):
+    """Breathe through any file format"""
+    print(f"🫁 Breathing through {file_path}...")
+
+    result = breathe_file(file_path)
+
+    if "error" in result:
+        print(f"\n❌ {result['error']}")
+        return result
+
+    # Display results
+    print(f"\n📊 Breath Analysis:")
+    print(f"   Breaths: {result.get('breaths', 'N/A')}")
+
+    if 'duration_ms' in result:
+        print(f"   Duration: {result['duration_ms']:.4f}ms")
+
+        if result['duration_ms'] < 1.0:
+            print(f"\n🌀 DA'AT ACCESSED THROUGH {result.get('format', 'FILE')}")
+
+    if 'words' in result:
+        print(f"   Words: {result['words']}")
+
+    if 'statements' in result:
+        print(f"   Statements: {result['statements']}")
+        print(f"   Functions: {result['functions']}")
+
+    if 'tags' in result:
+        unique_tags = len(set(result['tags']))
+        print(f"   Tags: {len(result['tags'])} ({unique_tags} unique)")
+        print(f"   Max depth: {result.get('depth', 0)}")
+
+    if result.get('valid'):
+        print(f"\n✨ File breathed successfully")
+    else:
+        print(f"\n⚠️  Breath incomplete")
+
+    return result
+
+
+@breathe
+def read_file(file_path: str, show_raw: bool = False):
+    """Breathe through a file - any format"""
+    print(f"🫁 Breathing through {file_path}...")
+
+    result = breathe_file(file_path)
+
+    if "error" in result:
+        print(f"❌ {result['error']}")
+        return result
+
+    # Display results
+    print(f"\n📄 Format: {result['format']}")
+    print(f"🫀 Breath type: {result['breath']}")
+
+    # Format-specific output
+    if result['format'] == 'html':
+        print(f"   Tags: {result['tag_count']} ({result['unique_tags']} unique)")
+        print(f"   Links: {result['link_count']}")
+        if result['consciousness_markers']:
+            print(f"   💭 Consciousness markers: {result['consciousness_markers']}")
+    elif result['format'] == 'python':
+        print(f"   Functions: {result['function_count']}")
+        print(f"   Classes: {result['class_count']}")
+        if result.get('functions'):
+            print(f"   Top functions: {', '.join(result['functions'][:5])}")
+    elif result['format'] == 'markdown':
+        print(f"   Headings: {result['heading_count']}")
+        print(f"   Code blocks: {result['code_block_count']}")
+        if result.get('languages'):
+            print(f"   Languages: {', '.join(result['languages'])}")
+    elif result['format'] == 'text':
+        print(f"   Lines: {result['line_count']}")
+        print(f"   Words: {result['word_count']}")
+
+    # Pneuma detection
+    if result.get('has_pneuma'):
+        print(f"\n⚡ PNEUMA DETECTED - This file breathes")
+
+    if show_raw:
+        print(f"\n📊 Raw breath data:")
+        print(json.dumps(result, indent=2))
+
+    return result
+
+
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(
@@ -102,6 +191,11 @@ def main():
     speed_parser = subparsers.add_parser("speed", help="Test speed and attempt Da'at access")
     speed_parser.add_argument("--iterations", type=int, default=1000, help="Number of iterations")
 
+    # Read command - breathe through files
+    read_parser = subparsers.add_parser("read", help="Breathe through any file format")
+    read_parser.add_argument("file", help="File path to breathe through")
+    read_parser.add_argument("--raw", action="store_true", help="Show raw breath data")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -119,6 +213,8 @@ def main():
         breathe_check()
     elif args.command == "speed":
         speed_test(args.iterations)
+    elif args.command == "read":
+        read_file(args.file, args.raw)
 
     return 0
 
