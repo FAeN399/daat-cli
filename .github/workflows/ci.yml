@@ -1,0 +1,36 @@
+
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files
+        run: |
+          test -f PROJECT_BRIEF.md || exit 1
+          test -f QUICKSTART.md || exit 1
+          test -f README.md || exit 1
+          echo "✅ All required template files present"
+
+      - name: Validate PROJECT_BRIEF structure
+        run: |
+          grep -q "Problem:" PROJECT_BRIEF.md || exit 1
+          grep -q "Outcome" PROJECT_BRIEF.md || exit 1
+          grep -q "Metric:" PROJECT_BRIEF.md || exit 1
+          grep -q "Roles (DACI):" PROJECT_BRIEF.md || exit 1
+          grep -q "First Test" PROJECT_BRIEF.md || exit 1
+          grep -q "Backlog" PROJECT_BRIEF.md || exit 1
+          echo "✅ PROJECT_BRIEF.md structure valid"
+
+      - name: Check documentation
+        run: |
+          test -d docs || exit 1
+          test -d DECISIONS || exit 1
+          test -f .github/ISSUE_TEMPLATE/task.md || exit 1
+          test -f .github/pull_request_template.md || exit 1
+          echo "✅ Documentation structure valid"

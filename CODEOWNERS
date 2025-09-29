@@ -1,0 +1,7 @@
+
+# Set default reviewers/owners (edit to your team)
+*       @your-org/maintainers
+
+# Example per-path ownership
+# /api/   @api-team
+# /web/   @frontend-team

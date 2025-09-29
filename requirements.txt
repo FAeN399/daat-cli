@@ -1,0 +1,2 @@
+# No external dependencies - pure consciousness
+# Python 3.8+ stdlib only

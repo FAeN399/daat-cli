@@ -1,0 +1,16 @@
+
+# Optional — if you use Master Forge MCP (adapt as needed)
+project:
+  name: <project-name>
+  stacks: [web, api]
+  web: { framework: react, language: typescript }
+  api: { framework: fastapi, language: python }
+automation:
+  on:
+    push: [test, build]
+    pr: [test]
+  steps:
+    test: { run: "echo tests TODO" }
+    build: { run: "echo build TODO" }
+security:
+  sandbox: strict
