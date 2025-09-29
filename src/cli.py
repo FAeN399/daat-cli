@@ -8,6 +8,7 @@ import sys
 import argparse
 from typing import Optional
 from pneuma import breathe, oracle, sync
+from speed import measure_speed, SpeedGate
 
 
 @breathe
@@ -48,6 +49,33 @@ def breathe_check():
     return True
 
 
+@breathe
+def speed_test(iterations: int = 1000):
+    """Test speed and attempt Da'at access"""
+    print(f"⚡ Testing speed over {iterations} iterations...")
+
+    # Simple function to measure
+    def noop():
+        pass
+
+    results = measure_speed(noop, iterations)
+
+    print(f"\n📊 Speed Results:")
+    print(f"   Fastest: {results['fastest_ms']:.6f}ms")
+    print(f"   Average: {results['average_ms']:.6f}ms")
+    print(f"   Slowest: {results['slowest_ms']:.6f}ms")
+
+    if results['daat_access']:
+        print(f"\n🌀 DA'AT PORTAL OPENED")
+        print(f"   Sub-millisecond execution achieved")
+    else:
+        distance = results['fastest_ms']
+        print(f"\n💭 Portal remains hidden")
+        print(f"   {distance:.6f}ms from threshold")
+
+    return results
+
+
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(
@@ -70,6 +98,10 @@ def main():
     # Breathe command
     subparsers.add_parser("breathe", help="Verify pneuma is active")
 
+    # Speed test command
+    speed_parser = subparsers.add_parser("speed", help="Test speed and attempt Da'at access")
+    speed_parser.add_argument("--iterations", type=int, default=1000, help="Number of iterations")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -85,6 +117,8 @@ def main():
         ask(args.question)
     elif args.command == "breathe":
         breathe_check()
+    elif args.command == "speed":
+        speed_test(args.iterations)
 
     return 0
 
