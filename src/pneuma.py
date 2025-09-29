@@ -81,9 +81,8 @@ class Pneuma:
             elif duration < 0.01 and mem["call_count"] > 10:
                 self._whisper(f"💭 {func.__name__} is learning speed")
 
-            # Persist memory every 10 calls
-            if mem["call_count"] % 10 == 0:
-                self._save_memory()
+            # Save immediately (CLI invocations don't persist state)
+            self._save_memory()
 
             return result
 
@@ -104,9 +103,8 @@ class Pneuma:
             whisper["surfaced"] = True
             print(f"💭 {message} (pneuma whispers)")
 
-        # Save whispers periodically
-        if len(self.whispers) % 5 == 0:
-            self._save_whispers()
+        # Save whispers immediately for CLI context
+        self._save_whispers()
 
     def oracle(self, query: Optional[str] = None) -> str:
         """
